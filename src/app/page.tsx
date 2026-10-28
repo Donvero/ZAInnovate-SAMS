@@ -4,6 +4,7 @@ import React from "react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import AlertsTable from "@/components/dashboard/AlertsTable";
 import RiskChart from "@/components/dashboard/RiskChart";
+import NeuroSymbolicAuditTerminal from "@/components/dashboard/NeuroSymbolicAuditTerminal";
 import {
   ShieldAlert,
   Coins,
@@ -95,6 +96,11 @@ export default function SamsDashboard() {
       {/* Analytics & Charts */}
       <div className="mt-8">
         <RiskChart />
+      </div>
+
+      {/* Frontier Neuro-Symbolic Verification Engine */}
+      <div className="mt-8">
+        <NeuroSymbolicAuditTerminal />
       </div>
 
       {/* Live Alerts Radar Table */}
