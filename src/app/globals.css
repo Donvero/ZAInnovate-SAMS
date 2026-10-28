@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 220 54% 12%;
+  --foreground: 210 40% 98%;
+  --navy: #0E1B2E;
+  --navy-light: #16253B;
+  --navy-dark: #08101C;
+  --gold: #FFC20E;
+  --gold-glow: rgba(255, 194, 14, 0.25);
+}
+
+body {
+  background-color: #08101C;
+  color: #F8FAFC;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0E1B2E;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E3557;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFC20E;
+}

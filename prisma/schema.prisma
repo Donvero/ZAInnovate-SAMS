@@ -1,0 +1,191 @@
+// This is your Prisma schema file for SAMS (Smart Audit Management System)
+// Engineered by ZAInnovate Technologies (Pty) Ltd - East London, South Africa
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  PROVINCIAL_OVERSIGHT
+  MUNICIPAL_MANAGER
+  INTERNAL_AUDITOR
+  SCM_OFFICER
+  COMPLIANCE_ANALYST
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AuditStatus {
+  UNQUALIFIED_CLEAN
+  FINANCIALLY_UNQUALIFIED
+  QUALIFIED
+  ADVERSE
+  DISCLAIMER
+  UNDER_REVIEW
+}
+
+enum TenderStatus {
+  PLANNING
+  ADVERTISED
+  EVALUATION
+  ADJUDICATED
+  AWARDED
+  FLAGGED_SUSPENDED
+  CANCELLED
+}
+
+enum IrregularityCategory {
+  SPLIT_TENDER_THRESHOLD_AVOIDANCE
+  SINGLE_SOURCE_DEVIATION
+  CONFLICT_OF_INTEREST
+  DIRECTOR_STATE_EMPLOYMENT
+  TAX_NON_COMPLIANCE
+  IRREGULAR_VARIATION_ORDER
+  EXCESSIVE_MARKUP
+  SHELL_COMPANY_COLLUSION
+  UNAPPROVED_EXPENDITURE
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  fullName      String
+  role          UserRole       @default(INTERNAL_AUDITOR)
+  departmentId  String?
+  department    Department?    @relation(fields: [departmentId], references: [id])
+  auditRecords  AuditRecord[]
+  createdAlerts Alert[]        @relation("AlertCreatedBy")
+  assignedAlerts Alert[]       @relation("AlertAssignedTo")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Department {
+  id              String             @id @default(cuid())
+  code            String             @unique // e.g. "EC-BUF-001"
+  name            String             // e.g. "Buffalo City Metropolitan Municipality - SCM"
+  province        String             @default("Eastern Cape")
+  category        String             @default("Local Municipality") // Metro, District, Provincial Dept, SOE
+  annualBudgetZAR Decimal            @db.Decimal(18, 2)
+  users           User[]
+  tenders         Tender[]
+  auditRecords    AuditRecord[]
+  riskFlags       RiskFlag[]
+  supplyEntries   SupplyChainEntry[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model Tender {
+  id                  String             @id @default(cuid())
+  tenderNumber        String             @unique // e.g. "BCMM-ENG-2026-089"
+  title               String
+  description         String
+  estimatedBudgetZAR  Decimal            @db.Decimal(18, 2)
+  awardedAmountZAR    Decimal?           @db.Decimal(18, 2)
+  awardedSupplierName String?
+  awardedSupplierCIPC String?            // South African CIPC registration number
+  status              TenderStatus       @default(PLANNING)
+  departmentId        String
+  department          Department         @relation(fields: [departmentId], references: [id])
+  supplyEntries       SupplyChainEntry[]
+  riskFlags           RiskFlag[]
+  alerts              Alert[]
+  advertisedDate      DateTime?
+  closingDate         DateTime?
+  awardedDate         DateTime?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model SupplyChainEntry {
+  id                  String             @id @default(cuid())
+  purchaseOrderNumber String             @unique
+  invoiceNumber       String?
+  vendorName          String
+  vendorTaxPin        String?
+  vendorCsdNumber     String?            // National Treasury Central Supplier Database ID (MAAA...)
+  amountZAR           Decimal            @db.Decimal(18, 2)
+  costCenterCode      String
+  paymentDate         DateTime?
+  tenderId            String?
+  tender              Tender?            @relation(fields: [tenderId], references: [id])
+  departmentId        String
+  department          Department         @relation(fields: [departmentId], references: [id])
+  riskFlags           RiskFlag[]
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model RiskFlag {
+  id                  String               @id @default(cuid())
+  flagCode            String               @unique // e.g. "RF-2026-0042"
+  category            IrregularityCategory
+  severity            RiskLevel            @default(HIGH)
+  title               String
+  description         String
+  detectedPattern     String               // e.g. "Three R198,000 orders placed across 48h below R200k competitive bidding threshold"
+  confidenceScore     Float                // 0.00 to 1.00 AI ML confidence
+  potentialLossZAR    Decimal?             @db.Decimal(18, 2)
+  isResolved          Boolean              @default(false)
+  resolutionNotes     String?
+  departmentId        String
+  department          Department           @relation(fields: [departmentId], references: [id])
+  tenderId            String?
+  tender              Tender?              @relation(fields: [tenderId], references: [id])
+  supplyEntryId       String?
+  supplyChainEntry    SupplyChainEntry?    @relation(fields: [supplyEntryId], references: [id])
+  alerts              Alert[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model Alert {
+  id                  String               @id @default(cuid())
+  alertId             String               @unique // e.g. "ALT-EC-2026-101"
+  title               String
+  summary             String
+  riskLevel           RiskLevel            @default(HIGH)
+  statutoryReference  String               // e.g. "MFMA Section 116(3)", "PFMA S38(1)(a)(iii)"
+  tenderId            String?
+  tender              Tender?              @relation(fields: [tenderId], references: [id])
+  riskFlagId          String?
+  riskFlag            RiskFlag?            @relation(fields: [riskFlagId], references: [id])
+  createdById         String?
+  createdBy           User?                @relation("AlertCreatedBy", fields: [createdById], references: [id])
+  assignedToId        String?
+  assignedTo          User?                @relation("AlertAssignedTo", fields: [assignedToId], references: [id])
+  isAcknowledged      Boolean              @default(false)
+  acknowledgedAt      DateTime?
+  actionTaken         String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model AuditRecord {
+  id                  String         @id @default(cuid())
+  financialYear       String         // e.g. "2024/2025" or "2025/2026"
+  auditCycle          String         // "AGSA_ANNUAL", "INTERNAL_QUARTERLY"
+  status              AuditStatus    @default(UNDER_REVIEW)
+  materialIrregularityCount Int      @default(0)
+  totalIrregularExpenditureZAR Decimal @default(0) @db.Decimal(18, 2)
+  cleanAuditScore     Float          // 0 to 100 compliance score
+  findingsSummary     String?
+  departmentId        String
+  department          Department     @relation(fields: [departmentId], references: [id])
+  leadAuditorId       String?
+  leadAuditor         User?          @relation(fields: [leadAuditorId], references: [id])
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
