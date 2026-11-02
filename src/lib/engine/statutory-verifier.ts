@@ -64,7 +64,7 @@ export class StatutoryRegulatorySolver {
     }
 
     // Evaluate temporal proximity for each group
-    for (const [key, vendorOrders] of grouped.entries()) {
+    for (const [key, vendorOrders] of Array.from(grouped.entries())) {
       // Sort chronologically
       const sorted = [...vendorOrders].sort((a, b) => a.issueDate.getTime() - b.issueDate.getTime());
 

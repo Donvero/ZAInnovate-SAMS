@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ShieldCheck, Bell, UserCheck, Building2, ChevronDown } from "lucide-react";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "SAMS | Smart Audit Management System - ZAInnovate Technologies",
@@ -27,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <body className="min-h-screen bg-[#08101C] font-sans text-slate-100 antialiased selection:bg-gold-500 selection:text-navy-950">
         {/* Top Sovereign Gov Banner */}
         <div className="border-b border-navy-800 bg-[#060D17] px-4 py-1.5 text-[11px] text-slate-400">

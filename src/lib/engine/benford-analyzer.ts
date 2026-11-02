@@ -45,9 +45,9 @@ export class BenfordForensicEngine {
     const leadingDigits: number[] = [];
     for (const val of amounts) {
       if (val > 0) {
-        const str = Math.abs(val).toString().replace(/^0+/, '').replace('.', '');
-        const firstDigit = parseInt(str[0], 10);
-        if (firstDigit >= 1 && firstDigit <= 9) {
+        const match = Math.abs(val).toString().match(/[1-9]/);
+        if (match) {
+          const firstDigit = parseInt(match[0], 10);
           leadingDigits.push(firstDigit);
         }
       }
