@@ -26,17 +26,20 @@ export default function SamsDashboard() {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-3 py-1 text-xs font-semibold text-gold-400 border border-gold-500/30">
               <Sparkles className="h-3.5 w-3.5" />
-              AI Predictive Engine Active
+              Review workspace
             </span>
             <span className="text-xs text-slate-400 font-mono">
-              Live Feed: Eastern Cape Municipal Cluster
+              Sample municipal cluster
             </span>
           </div>
           <h1 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
-            SAMS Predictive Governance Portal
+            SAMS governance review workspace
           </h1>
           <p className="mt-1 text-sm text-slate-400 max-w-3xl">
-            Proactive pattern-recognition engine analyzing SCM transactions, tender splitting, and single-source deviations to prevent adverse AGSA audit findings.
+            A review workspace for procurement evidence, statutory rules, and human decisions. Connect your source data before treating any figure as operational.
+          </p>
+          <p className="mt-3 text-xs text-amber-300/80">
+            Illustrative workspace · the values below are sample records, not an audit result.
           </p>
         </div>
 
@@ -56,40 +59,40 @@ export default function SamsDashboard() {
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Active Irregularity Flags"
+          title="Sample irregularity flags"
           value="18"
-          change="-28%"
+          change="illustrative"
           isPositive={true}
-          subtext="3 Critical requiring AO intervention"
+          subtext="Example queue for accounting-officer review"
           icon={ShieldAlert}
-          badgeText="Predictive Early"
+          badgeText="Sample"
         />
         <StatsCard
-          title="Preserved Public Capital"
+          title="Sample exposure"
           value="R 61.2M"
-          change="+34.5%"
+          change="illustrative"
           isPositive={true}
-          subtext="Blocked before electronic voucher signoff"
+          subtext="Example exposure requiring evidence"
           icon={Coins}
-          badgeText="YTD 2025/26"
+          badgeText="Sample period"
         />
         <StatsCard
-          title="Clean Audit Readiness Index"
+          title="Sample rule coverage"
           value="94.2%"
-          change="+6.1%"
+          change="illustrative"
           isPositive={true}
-          subtext="MFMA Section 116 compliance score"
+          subtext="Example rule coverage, not a compliance score"
           icon={FileCheck2}
-          badgeText="AGSA Standard"
+          badgeText="Illustrative"
         />
         <StatsCard
-          title="Scanned SCM Vouchers"
+          title="Sample records reviewed"
           value="14,892"
-          change="+18%"
+          change="illustrative"
           isPositive={true}
-          subtext="Live cross-checks against Persal & CIPC"
+          subtext="Example records awaiting source connection"
           icon={Activity}
-          badgeText="99.98% uptime"
+          badgeText="Illustrative"
         />
       </div>
 
